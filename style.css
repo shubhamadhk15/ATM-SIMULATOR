@@ -1,0 +1,26 @@
+QWidget{
+    background-color:rgb(255, 180, 209);
+}
+
+#frame{
+    background-color:rgb(184, 33, 91);
+}
+#frame_2{
+    background-color: white;
+    border-color: white;
+}
+
+#label,#instructLabel{
+    background-color:rgb(184, 33, 91);
+    color: white;
+}
+#cardSlot{
+    background-color: gray;
+}
+
+QLineEdit{
+    background-color:rgb(255, 225, 236);
+}
+#cancelBtn,#clearBtn,#proceedBtn{
+    background-color: rgb(184, 33, 91);
+}
