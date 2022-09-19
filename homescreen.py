@@ -17,6 +17,7 @@ from PyQt5.uic import loadUi
 class Session():
     def setCardNo(self,cardNo):
         self.cardNo = cardNo
+        self.accNo = fetchAccNoFromCard(cardNo)
         self.firstName = fetchFirstNameFromCard(cardNo)
         
 
@@ -105,7 +106,11 @@ class withdrawScr(QDialog):
 
     def proceed(self):
         print('Cashout Part')
-        p = promptScr('TRANSACTION SUCCESSFULL','PLEASE COLLECT YOUR CASH AND CARD')
+        if self.amount>fetchBal(newSession.accNo):
+            p = promptScr('INSUFFICIENT BALANCE','PLEASE TAKE OUT YOUR CARD')
+        else:
+            print(deductAmount(self.amount,newSession.accNo))
+            p = promptScr('TRANSACTION SUCCESSFULL','PLEASE COLLECT YOUR CASH AND CARD')
         widget.addWidget(p)
         widget.setCurrentIndex(widget.indexOf(p))
         # gotoHome(widget)
