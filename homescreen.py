@@ -15,9 +15,6 @@ from PyQt5.uic import loadUi
 #         pass
 
 class Session():
-    def __init__(self):
-        self.cardNo='cardNo'
-        self.firstName='firstName'
     def setCardNo(self,cardNo):
         self.cardNo = cardNo
         self.firstName = fetchFirstNameFromCard(cardNo)
@@ -72,8 +69,8 @@ class homescreen(QDialog):
         print(x)
         if(x):
             print('card accepted')
-            self.menuObj = menu()
             newSession.setCardNo(card_no)
+            self.menuObj = menu()
             widget.addWidget(self.menuObj)
             widget.setCurrentIndex(widget.indexOf(self.menuObj))
         else:
