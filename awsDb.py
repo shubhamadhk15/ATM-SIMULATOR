@@ -28,3 +28,7 @@ def fetchFirstNameFromCard(cardNo):
     cr.execute(q)
     return list(cr)[0][0]
 
+def fetchPin(cardNo):
+    q = 'SELECT CardPin FROM Card WHERE CardNo='+cardNo
+    cr.execute(q)
+    return list(cr)[0][0]
