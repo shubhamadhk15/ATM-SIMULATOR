@@ -32,6 +32,3 @@ def isValidCardNo(cardNo):
         return True
     else:
         return False
-
-print(fetchFirstNameFromCard('4214920353926200'))
-
