@@ -137,7 +137,7 @@ class pinScr(QDialog):
     #         self.lineEdit.setText('0')
 
     def verifyPin(self):
-        if self.lineEdit.text() == '0000':
+        if self.lineEdit.text() == fetchPin(newSession.cardNo):
             self.parentObj.proceed()
         else:
             p = promptScr('Invalid PIN','Please Takout Your Card')
