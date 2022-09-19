@@ -65,9 +65,7 @@ class homescreen(QDialog):
         except :
             print('Invalid Card  hehe')
             return
-        x=isValidCardNo(card_no)
-        print(x)
-        if(x):
+        if(isValidCardNo(card_no)):
             print('card accepted')
             newSession.setCardNo(card_no)
             self.menuObj = menu()
@@ -98,14 +96,14 @@ class withdrawScr(QDialog):
     def verifyAmount(self):
         try:
             self.amount = int(self.lineEdit.text())
-            pinObj = pinScr()
+            pinObj = pinScr(self)
             widget.addWidget(pinObj)
             widget.setCurrentIndex(widget.currentIndex()+1)
 
         except ValueError:
             print('Invalid Format')
 
-    def cashout(self):
+    def proceed(self):
         print('Cashout Part')
         p = promptScr('TRANSACTION SUCCESSFULL','PLEASE COLLECT YOUR CASH AND CARD')
         widget.addWidget(p)
@@ -128,9 +126,10 @@ class promptScr(QDialog):
         widget.setCurrentIndex(widget.indexOf(home))
 
 class pinScr(QDialog):
-    def __init__(self):
+    def __init__(self,parentObj):
         super(pinScr,self).__init__()
         loadUi('UI/pin.ui',self)
+        self.parentObj = parentObj
         self.setStyleSheet(cssLoader('style.css'))
         self.proceedBtn.clicked.connect(self.verifyPin)
     # def keyPressEvent(self, event: QtGui.QKeyEvent):
@@ -139,7 +138,7 @@ class pinScr(QDialog):
 
     def verifyPin(self):
         if self.lineEdit.text() == '0000':
-            homeScr.menuObj.withdrawObj.cashout()
+            self.parentObj.proceed()
         else:
             p = promptScr('Invalid PIN','Please Takout Your Card')
             widget.addWidget(p)
