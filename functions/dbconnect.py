@@ -9,6 +9,9 @@ mydb = mysql.connector.connect(
 
 
 cr = mydb.cursor()
-query = "SELECT Cust_FirstName FROM Customer WHERE Cust_FirstName = 'Ankit'"
+query = "INSERT INTO `Account` (`Acc_Bal`, `Cust_Id`) VALUES ('100000', '2');"
 cr.execute(query) 
-print(list(cr)[0][0])
+# for i in cr:
+#     print(i)
+
+mydb.commit()

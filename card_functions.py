@@ -1,9 +1,9 @@
 '''Author :: Ankit Yadav
     Date :: 14/09/2022
 '''
-
-import enc_dec,os
+import os,enc_dec
 from zipfile import ZipFile
+from awsDb import *
 
 def generate_card(card_no,name):   #generates a card file 'name.card' for card_no in the working directory
 
@@ -20,11 +20,18 @@ def generate_card(card_no,name):   #generates a card file 'name.card' for card_n
 def fetch_card(card):
     with ZipFile(card,'r') as z:
         z.extractall()
-    os.remove(card)
     enc_dec.decryptfile('temp_enc.txt','temp.key')
     with open('temp.txt','r') as f2:
         val = f2.read()
     os.remove('temp.txt')
-    return val
+    return val[:len(val)-1]
 
-generate_card('1258965482','AnkitYadav')
+def isValidCardNo(cardNo):
+    cardList = getCards()
+    if cardNo in cardList:
+        return True
+    else:
+        return False
+
+print(fetchFirstNameFromCard('4214920353926200'))
+

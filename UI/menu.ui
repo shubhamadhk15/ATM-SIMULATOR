@@ -79,7 +79,7 @@
    <property name="geometry">
     <rect>
      <x>0</x>
-     <y>100</y>
+     <y>140</y>
      <width>700</width>
      <height>50</height>
     </rect>
@@ -103,9 +103,9 @@
    <property name="geometry">
     <rect>
      <x>0</x>
-     <y>160</y>
+     <y>190</y>
      <width>701</width>
-     <height>211</height>
+     <height>181</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
@@ -227,6 +227,27 @@
      </widget>
     </item>
    </layout>
+  </widget>
+  <widget class="QLabel" name="greetLabel">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>90</y>
+     <width>700</width>
+     <height>50</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>20</pointsize>
+    </font>
+   </property>
+   <property name="text">
+    <string>GREETING</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
   </widget>
  </widget>
  <resources/>

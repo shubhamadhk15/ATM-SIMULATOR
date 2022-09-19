@@ -1,7 +1,8 @@
 '''Author :: Ankit Yadav
     Date :: 16/09/2022
 '''
-
+from awsDb import *
+from card_functions import isValidCardNo,fetch_card
 import sys,os,datetime
 from PyQt5 import QtCore,QtGui
 from PyQt5.Qt import Qt
@@ -13,6 +14,14 @@ from PyQt5.uic import loadUi
 #     while(datetime.datetime.now()<current + datetime.timedelta(seconds=interval)):
 #         pass
 
+class Session():
+    def __init__(self):
+        self.cardNo='cardNo'
+        self.firstName='firstName'
+    def setCardNo(self,cardNo):
+        self.cardNo = cardNo
+        self.firstName = fetchFirstNameFromCard(cardNo)
+        
 
 def cssLoader(file):
     with open(file,'r') as f:
@@ -51,11 +60,24 @@ class homescreen(QDialog):
     def verifyCard(self):
         if self.path[-5:]!='.card':
             print('invalid card')
-        else:
+            return
+        
+        try:
+            card_no = fetch_card(self.path)
+            print(card_no)
+        except :
+            print('Invalid Card  hehe')
+            return
+        x=isValidCardNo(card_no)
+        print(x)
+        if(x):
             print('card accepted')
             self.menuObj = menu()
+            newSession.setCardNo(card_no)
             widget.addWidget(self.menuObj)
             widget.setCurrentIndex(widget.indexOf(self.menuObj))
+        else:
+            print('Card Not found')
 
 class menu(QDialog):
     def __init__(self):
@@ -63,6 +85,7 @@ class menu(QDialog):
         loadUi('UI/menu.ui',self)
         self.setStyleSheet(cssLoader('style.css'))
         self.withdrawBtn.clicked.connect(self.withdraw)
+        self.greetLabel.setText('Welcome '+newSession.firstName)
 
     def withdraw(self):
         self.withdrawObj = withdrawScr()
@@ -132,6 +155,7 @@ if __name__=='__main__':
     widget.setFixedWidth(700)
     homeScr = homescreen()
     widget.addWidget(homeScr)
+    newSession = Session()
     widget.show()
 
     try:
