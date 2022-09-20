@@ -5,13 +5,12 @@ from awsDb import *
 from admin import createAdminMenu
 from stackedwidget import widget,app
 from card_functions import isValidCardNo,fetch_card,cssLoader
-import subprocess
 
 import sys,os,datetime
 from PyQt5 import QtCore
 from PyQt5.QtGui import QKeySequence
 # from PyQt5.Qt import Qt
-from PyQt5.QtWidgets import QApplication,QDialog,QStackedWidget,QShortcut
+from PyQt5.QtWidgets import QDialog,QShortcut
 from PyQt5.uic import loadUi
     
 # def countdown(interval):
@@ -85,12 +84,23 @@ class menu(QDialog):
         loadUi('UI/menu.ui',self)
         self.setStyleSheet(cssLoader('style.css'))
         self.withdrawBtn.clicked.connect(self.withdraw)
+        self.balBtn.clicked.connect(self.checkBal)
         self.greetLabel.setText('Welcome '+newSession.firstName)
 
     def withdraw(self):
         self.withdrawObj = withdrawScr()
         widget.addWidget(self.withdrawObj)
         widget.setCurrentIndex(widget.indexOf(self.withdrawObj))
+
+    def checkBal(self):
+        pinObj = pinScr(self)
+        widget.addWidget(pinObj)
+        widget.setCurrentWidget(pinObj)
+
+    def proceed(self):
+        p = promptScr('Account Balance','Rs. '+str(fetchBal(newSession.accNo)))
+        widget.addWidget(p)
+        widget.setCurrentWidget(p)
 
 class withdrawScr(QDialog):
     def __init__(self):
