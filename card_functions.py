@@ -32,3 +32,8 @@ def isValidCardNo(cardNo):
         return True
     else:
         return False
+
+def cssLoader(file):
+    with open(file,'r') as f:
+        rd = f.read()
+    return rd

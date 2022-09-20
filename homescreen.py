@@ -2,11 +2,16 @@
     Date :: 16/09/2022
 '''
 from awsDb import *
-from card_functions import isValidCardNo,fetch_card
+from admin import createAdminMenu
+from stackedwidget import widget,app
+from card_functions import isValidCardNo,fetch_card,cssLoader
+import subprocess
+
 import sys,os,datetime
-from PyQt5 import QtCore,QtGui
-from PyQt5.Qt import Qt
-from PyQt5.QtWidgets import QApplication,QDialog,QStackedWidget
+from PyQt5 import QtCore
+from PyQt5.QtGui import QKeySequence
+# from PyQt5.Qt import Qt
+from PyQt5.QtWidgets import QApplication,QDialog,QStackedWidget,QShortcut
 from PyQt5.uic import loadUi
     
 # def countdown(interval):
@@ -21,11 +26,6 @@ class Session():
         self.firstName = fetchFirstNameFromCard(cardNo)
         
 
-def cssLoader(file):
-    with open(file,'r') as f:
-        rd = f.read()
-    return rd
-
 class homescreen(QDialog):
     path = '/'
     def __init__(self):
@@ -33,6 +33,8 @@ class homescreen(QDialog):
         loadUi('UI/homescreen.ui',self)
         self.setStyleSheet(cssLoader('style.css'))
         self.DragDrop = self.lineEdit
+        self.shortcut = QShortcut(QKeySequence('Ctrl+O'),self)
+        self.shortcut.activated.connect(self.openAdminMenu)
         self.drop()
 
     def drop(self):
@@ -62,7 +64,6 @@ class homescreen(QDialog):
         
         try:
             card_no = fetch_card(self.path)
-            print(card_no)
         except :
             print('Invalid Card  hehe')
             return
@@ -74,6 +75,9 @@ class homescreen(QDialog):
             widget.setCurrentIndex(widget.indexOf(self.menuObj))
         else:
             print('Card Not found')
+
+    def openAdminMenu(self):
+        createAdminMenu()
 
 class menu(QDialog):
     def __init__(self):
@@ -105,15 +109,13 @@ class withdrawScr(QDialog):
             print('Invalid Format')
 
     def proceed(self):
-        print('Cashout Part')
         if self.amount>fetchBal(newSession.accNo):
             p = promptScr('INSUFFICIENT BALANCE','PLEASE TAKE OUT YOUR CARD')
         else:
-            print(deductAmount(self.amount,newSession.accNo))
+            deductAmount(self.amount,newSession.accNo)
             p = promptScr('TRANSACTION SUCCESSFULL','PLEASE COLLECT YOUR CASH AND CARD')
         widget.addWidget(p)
         widget.setCurrentIndex(widget.indexOf(p))
-        # gotoHome(widget)
         
 
 class promptScr(QDialog):
@@ -150,10 +152,6 @@ class pinScr(QDialog):
             widget.setCurrentWidget(p)
 
 if __name__=='__main__':
-    app = QApplication(sys.argv)
-    widget = QStackedWidget()
-    widget.setFixedHeight(420)
-    widget.setFixedWidth(700)
     homeScr = homescreen()
     widget.addWidget(homeScr)
     newSession = Session()

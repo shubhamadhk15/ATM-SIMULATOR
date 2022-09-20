@@ -1,11 +1,8 @@
-
-from select import select
 import mysql.connector
 mydb = mysql.connector.connect(host='atm-db.cl5eytgewt31.ap-south-1.rds.amazonaws.com',
 user='admin',
 password='velocity',
 database='atm-db')
-
 cr = mydb.cursor()
 
 def getCards():
@@ -48,6 +45,6 @@ def deductAmount(amount,accNo):
 
 
 
-q = 'SELECT AccBal FROM Account WHERE AccNo=2035000002'
-cr.execute(q)
-print(cr.fetchall())
+# q = 'SELECT AccBal FROM Account WHERE AccNo=2035000002'
+# cr.execute(q)
+# print(cr.fetchall())
