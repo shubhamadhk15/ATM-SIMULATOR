@@ -14,4 +14,3 @@ class AdminMenu(QDialog):
         super(AdminMenu,self).__init__()
         loadUi('UI/admin_menu.ui',self)
         self.setStyleSheet(cssLoader('style.css'))
-

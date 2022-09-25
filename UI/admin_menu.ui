@@ -173,7 +173,7 @@
      <number>100</number>
     </property>
     <item row="0" column="0">
-     <widget class="QPushButton" name="pushButton">
+     <widget class="QPushButton" name="newAcBtn">
       <property name="font">
        <font>
         <pointsize>12</pointsize>
@@ -185,7 +185,7 @@
      </widget>
     </item>
     <item row="0" column="1">
-     <widget class="QPushButton" name="pushButton_2">
+     <widget class="QPushButton" name="issueCardBtn">
       <property name="font">
        <font>
         <pointsize>12</pointsize>
@@ -197,7 +197,7 @@
      </widget>
     </item>
     <item row="1" column="0">
-     <widget class="QPushButton" name="pushButton_3">
+     <widget class="QPushButton" name="ExAcBtn">
       <property name="font">
        <font>
         <pointsize>12</pointsize>
@@ -205,6 +205,18 @@
       </property>
       <property name="text">
        <string>Existing User Account</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QPushButton" name="refillBtn">
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>Refill This ATM</string>
       </property>
      </widget>
     </item>

@@ -1,0 +1,24 @@
+boolean isValidInput(int x){
+    //Complete the function here
+}
+
+/*
+Arguments : x - Integer Input from user.
+
+Returns : True, if x is a valid input of Amount i.e., Multiple of either 100,200,500 or 2000. Minimum value of x must be 100.
+          False, otherwise.
+*/
+
+int[] getDenominationCounts(int x){
+    //Complete function
+}
+
+/*
+Arguments : x - Valid Integer amount.
+Returns : An integer array having count of 100, 200, 500 , 2000 notes respecively to be disbursed out from the atm. Total value of it must be equal to the input amount x.
+          Note : Priority should be given to higher denomination amount.
+          
+          Example test case:
+            x = 4000 : Returns - [0,0,0,2]
+        Example test case:
+            x = 2800 : Returns - [1,1,1,1]
