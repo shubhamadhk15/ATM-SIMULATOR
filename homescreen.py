@@ -43,9 +43,8 @@ class homescreen(QDialog):
 
     def eventFilter(self, source, event):
         if event.type() == QtCore.QEvent.DragEnter:
-            if event.mimeData().hasFormat('text/plain'):
-                event.accept()
-                return True
+            event.accept()
+            return True
         if event.type() == QtCore.QEvent.Drop:
             for url in event.mimeData().urls():
                 path = url.toLocalFile()
