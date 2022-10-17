@@ -10,7 +10,7 @@ client = Client(account_sid, auth_token)
 message = client.messages.create(
                      body="This is your OTP: "+str(OTP),
                      from_='+19292076630',
-                     to='+918240485958'
+                     to='+91'
                  )
 
 print(message.sid)
