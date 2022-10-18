@@ -1,9 +1,9 @@
 QWidget{
-    background-color:rgb(255, 180, 209);
+    background-color:rgb(226, 243, 249);
 }
 
 #frame{
-    background-color:rgb(184, 33, 91);
+    background-color:rgb(86, 168, 240);
 }
 #frame_2{
     background-color: white;
@@ -11,7 +11,7 @@ QWidget{
 }
 
 #label,#instructLabel{
-    background-color:rgb(184, 33, 91);
+    background-color:rgb(86, 168, 240);
     color: white;
 }
 #cardSlot{
@@ -19,8 +19,14 @@ QWidget{
 }
 
 QLineEdit{
-    background-color:rgb(255, 225, 236);
+    background-color:rgb(171, 206, 237);
+    border: 2px solid rgb(66, 158, 238);
+    border-radius: 2px;
+}
+QPushButton{
+    background-color: rgb(86, 168, 240);
+    color: white;
 }
 #cancelBtn,#clearBtn,#proceedBtn{
-    background-color: rgb(184, 33, 91);
+    background-color: rgb(86, 168, 240);
 }
