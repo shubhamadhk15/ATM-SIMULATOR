@@ -18,6 +18,11 @@ from PyQt5.uic import loadUi
 #     while(datetime.datetime.now()<current + datetime.timedelta(seconds=interval)):
 #         pass
 
+def gotoHome():
+    home = homescreen()
+    widget.addWidget(home)
+    widget.setCurrentIndex(widget.indexOf(home))
+
 class Session():
     def setCardNo(self,cardNo):
         self.cardNo = cardNo
@@ -85,6 +90,7 @@ class menu(QDialog):
         self.withdrawBtn.clicked.connect(self.withdraw)
         self.balBtn.clicked.connect(self.checkBal)
         self.greetLabel.setText('Welcome '+newSession.firstName)
+        self.cancelBtn.clicked.connect(gotoHome)
 
     def withdraw(self):
         self.withdrawObj = withdrawScr()
@@ -107,6 +113,9 @@ class withdrawScr(QDialog):
         loadUi('UI/withdraw.ui',self)
         self.setStyleSheet(cssLoader('style.css'))
         self.proceedBtn.clicked.connect(self.verifyAmount)
+        self.clearBtn.clicked.connect(self.clear)
+        self.cancelBtn.clicked.connect(gotoHome)
+
     def verifyAmount(self):
         try:
             self.amount = int(self.lineEdit.text())
@@ -125,6 +134,9 @@ class withdrawScr(QDialog):
             p = promptScr('TRANSACTION SUCCESSFULL','PLEASE COLLECT YOUR CASH AND CARD')
         widget.addWidget(p)
         widget.setCurrentIndex(widget.indexOf(p))
+
+    def clear(self):
+        self.lineEdit.setText('')
         
 
 class promptScr(QDialog):
@@ -134,12 +146,8 @@ class promptScr(QDialog):
         self.setStyleSheet(cssLoader('style.css'))
         self.instructLabel.setText(message)
         self.descLabel.setText(desc)
-        self.cancelBtn.clicked.connect(self.gotoHome)
+        self.cancelBtn.clicked.connect(gotoHome)
 
-    def gotoHome(self):
-        home = homescreen()
-        widget.addWidget(home)
-        widget.setCurrentIndex(widget.indexOf(home))
 
 class pinScr(QDialog):
     def __init__(self,parentObj):
@@ -148,6 +156,8 @@ class pinScr(QDialog):
         self.parentObj = parentObj
         self.setStyleSheet(cssLoader('style.css'))
         self.proceedBtn.clicked.connect(self.verifyPin)
+        self.clearBtn.clicked.connect(self.clear)
+        self.cancelBtn.clicked.connect(gotoHome)
     # def keyPressEvent(self, event: QtGui.QKeyEvent):
     #     if event.key() == Qt.Key_Num0:
     #         self.lineEdit.setText('0')
@@ -159,6 +169,9 @@ class pinScr(QDialog):
             p = promptScr('Invalid PIN','Please Takout Your Card')
             widget.addWidget(p)
             widget.setCurrentWidget(p)
+
+    def clear(self):
+        self.lineEdit.setText('')
 
 if __name__=='__main__':
     homeScr = homescreen()

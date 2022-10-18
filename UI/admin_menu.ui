@@ -46,7 +46,7 @@
      </font>
     </property>
     <property name="text">
-     <string>AXIS BANK</string>
+     <string>ABC BANK</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>

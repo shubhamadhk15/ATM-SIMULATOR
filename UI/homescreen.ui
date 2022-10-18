@@ -58,7 +58,7 @@
      </font>
     </property>
     <property name="text">
-     <string>AXIS BANK</string>
+     <string>ABC BANK</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
@@ -154,7 +154,7 @@
     </font>
    </property>
    <property name="text">
-    <string>WELCOME TO AXIS BANK ATM</string>
+    <string>WELCOME TO ABC BANK ATM</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>
