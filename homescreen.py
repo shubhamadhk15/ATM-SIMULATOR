@@ -19,6 +19,11 @@ from PyQt5.uic import loadUi
 #     while(datetime.datetime.now()<current + datetime.timedelta(seconds=interval)):
 #         pass
 
+def prompt(heading,msg):
+    p = promptScr(heading,msg)
+    widget.addWidget(p)
+    widget.setCurrentWidget(p)
+
 def gotoHome():
     home = homescreen()
     widget.addWidget(home)
@@ -106,9 +111,7 @@ class menu(QDialog):
         widget.setCurrentWidget(pinObj)
 
     def proceed(self):
-        p = promptScr('Account Balance','Rs. '+str(fetchBal(newSession.accNo)))
-        widget.addWidget(p)
-        widget.setCurrentWidget(p)
+        prompt('Account Balance','Rs. '+str(fetchBal(newSession.accNo)))
 
     def reset(self):
         s = ResetPinSession()
@@ -160,18 +163,14 @@ class ResetPinSession():
             self.otp = sendOtp(mobile,'Pin Reset')
             self.proceed(self)
         else:
-            p = promptScr('INVALID MOBILE NUMBER',"Please takeout your card")
-            widget.addWidget(p)
-            widget.setCurrentWidget(p)
+            prompt('INVALID MOBILE NUMBER',"Please takeout your card")
 
     def verifyOtp(self):
         if self.val ==self.otp:
             self.otpVerified=True
             self.proceed(self)
         else:
-            p = promptScr('Invalid OTP',"Please takeout your card")
-            widget.addWidget(p)
-            widget.setCurrentWidget(p)
+            prompt('Invalid OTP',"Please takeout your card")
 
     def checkPins(self):
         if self.pins[0]==self.pins[1]:
@@ -179,9 +178,7 @@ class ResetPinSession():
             msg = 'Pin Successfully Reset'.upper()
         else:
             msg = 'Pin does not Match'.upper()
-        p = promptScr(msg,"Please takeout your card")
-        widget.addWidget(p)
-        widget.setCurrentWidget(p)
+        prompt(msg,"Please takeout your card")
 
     def getVal(self):
         pass
@@ -207,12 +204,10 @@ class withdrawScr(QDialog):
 
     def proceed(self):
         if self.amount>fetchBal(newSession.accNo):
-            p = promptScr('INSUFFICIENT BALANCE','PLEASE TAKE OUT YOUR CARD')
+            prompt('INSUFFICIENT BALANCE','PLEASE TAKE OUT YOUR CARD')
         else:
             deductAmount(self.amount,newSession.accNo)
-            p = promptScr('TRANSACTION SUCCESSFULL','PLEASE COLLECT YOUR CASH AND CARD')
-        widget.addWidget(p)
-        widget.setCurrentIndex(widget.indexOf(p))
+            prompt('TRANSACTION SUCCESSFULL','PLEASE COLLECT YOUR CASH AND CARD')
 
     def clear(self):
         self.lineEdit.setText('')
@@ -245,9 +240,7 @@ class pinScr(QDialog):
         if self.lineEdit.text() == fetchPin(newSession.cardNo):
             self.parentObj.proceed()
         else:
-            p = promptScr('Invalid PIN','Please Takout Your Card')
-            widget.addWidget(p)
-            widget.setCurrentWidget(p)
+            prompt('Invalid PIN','Please Takout Your Card')
 
     def clear(self):
         self.lineEdit.setText('')
