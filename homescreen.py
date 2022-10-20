@@ -123,9 +123,6 @@ class ResetPinSession():
         self.mobileVerified= False
         self.otpVerified = False
 
-    def setMobile(self,mob):
-        self.mob = mob
-
     def proceed(self,inpObj):
         self.val = inpObj.getVal()
         if self.mobileVerified:
@@ -158,11 +155,9 @@ class ResetPinSession():
 
     def verifyMobile(self):
         mobile = fetchMobileFromAccNo(newSession.accNo)
-        print(mobile)
         if self.val == mobile:
             self.mobileVerified = True
             self.otp = sendOtp(mobile,'Pin Reset')
-            self.otp = '0000'
             self.proceed(self)
         else:
             p = promptScr('INVALID MOBILE NUMBER',"Please takeout your card")
