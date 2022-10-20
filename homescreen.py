@@ -5,12 +5,13 @@ from awsDb import *
 from admin import createAdminMenu
 from stackedwidget import widget,app
 from card_functions import isValidCardNo,fetch_card,cssLoader
+from sms import sendOtp
 
-import sys,os,datetime
+import sys,os
 from PyQt5 import QtCore
 from PyQt5.QtGui import QKeySequence
 # from PyQt5.Qt import Qt
-from PyQt5.QtWidgets import QDialog,QShortcut
+from PyQt5.QtWidgets import QDialog,QShortcut,QLineEdit
 from PyQt5.uic import loadUi
     
 # def countdown(interval):
@@ -91,6 +92,8 @@ class menu(QDialog):
         self.balBtn.clicked.connect(self.checkBal)
         self.greetLabel.setText('Welcome '+newSession.firstName)
         self.cancelBtn.clicked.connect(gotoHome)
+        self.resetBtn.clicked.connect(self.reset)
+        self.flag = True
 
     def withdraw(self):
         self.withdrawObj = withdrawScr()
@@ -107,6 +110,87 @@ class menu(QDialog):
         widget.addWidget(p)
         widget.setCurrentWidget(p)
 
+    def reset(self):
+        s = ResetPinSession()
+        inp = InputStr(s,'ENTER MOBILE NUMBER')
+        widget.addWidget(inp)
+        widget.setCurrentWidget(inp)
+
+class ResetPinSession():
+    def __init__(self) -> None:
+        self.pins=[False,False]
+        self.otpEntered = False
+        self.mobileVerified= False
+        self.otpVerified = False
+
+    def setMobile(self,mob):
+        self.mob = mob
+
+    def proceed(self,inpObj):
+        self.val = inpObj.getVal()
+        if self.mobileVerified:
+            if self.otpVerified:
+                if self.pins[0]!=True and self.pins[0]!=False:
+                    self.pins[1] = self.val
+                    self.checkPins()
+                elif self.pins[0]==False:
+                    self.pins[0] = True
+                    inpPin = InputStr(self,'ENTER NEW PIN',4,'pass')
+                    widget.addWidget(inpPin)
+                    widget.setCurrentWidget(inpPin)
+                else:
+                    self.pins[0] = self.val
+                    inpPin = InputStr(self,'CONFIRM NEW PIN',4,'pass')
+                    widget.addWidget(inpPin)
+                    widget.setCurrentWidget(inpPin)
+
+            elif self.otpEntered==False:
+                self.otpEntered = True
+                inpOtp = InputStr(self,'ENTER  OTP',4)
+                widget.addWidget(inpOtp)
+                widget.setCurrentWidget(inpOtp)
+
+            else:
+                self.verifyOtp()
+
+        else:
+            self.verifyMobile()
+
+    def verifyMobile(self):
+        mobile = fetchMobileFromAccNo(newSession.accNo)
+        print(mobile)
+        if self.val == mobile:
+            self.mobileVerified = True
+            self.otp = sendOtp(mobile,'Pin Reset')
+            self.otp = '0000'
+            self.proceed(self)
+        else:
+            p = promptScr('INVALID MOBILE NUMBER',"Please takeout your card")
+            widget.addWidget(p)
+            widget.setCurrentWidget(p)
+
+    def verifyOtp(self):
+        if self.val ==self.otp:
+            self.otpVerified=True
+            self.proceed(self)
+        else:
+            p = promptScr('Invalid OTP',"Please takeout your card")
+            widget.addWidget(p)
+            widget.setCurrentWidget(p)
+
+    def checkPins(self):
+        if self.pins[0]==self.pins[1]:
+            updatePin(newSession.cardNo,self.pins[0])
+            msg = 'Pin Successfully Reset'.upper()
+        else:
+            msg = 'Pin does not Match'.upper()
+        p = promptScr(msg,"Please takeout your card")
+        widget.addWidget(p)
+        widget.setCurrentWidget(p)
+
+    def getVal(self):
+        pass
+            
 class withdrawScr(QDialog):
     def __init__(self):
         super(withdrawScr,self).__init__()
@@ -169,6 +253,28 @@ class pinScr(QDialog):
             p = promptScr('Invalid PIN','Please Takout Your Card')
             widget.addWidget(p)
             widget.setCurrentWidget(p)
+
+    def clear(self):
+        self.lineEdit.setText('')
+
+class InputStr(QDialog):
+    def __init__(self,parent,fieldname,maxLen=10,type='normal'):
+        super(InputStr,self).__init__()
+        loadUi('UI/withdraw.ui',self)
+        self.parent = parent
+        self.instructLabel.setText(fieldname)
+        self.setStyleSheet(cssLoader('style.css'))
+        self.proceedBtn.clicked.connect(self.proceed)
+        self.clearBtn.clicked.connect(self.clear)
+        self.cancelBtn.clicked.connect(gotoHome)
+        self.lineEdit.setMaxLength(maxLen)
+        if type == 'pass':
+            self.lineEdit.setEchoMode(QLineEdit.Password)
+
+    def proceed(self):
+        self.parent.proceed(self)
+    def getVal(self):
+        return self.lineEdit.text()
 
     def clear(self):
         self.lineEdit.setText('')

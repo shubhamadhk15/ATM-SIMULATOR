@@ -43,8 +43,16 @@ def deductAmount(amount,accNo):
     cr.execute(q)
     mydb.commit()
 
+def fetchMobileFromAccNo(AccNo):
+    q='SELECT CustMobile FROM Customer WHERE CustId = '+ str(fetchCustIdFromAccNo(AccNo))
+    cr.execute(q)
+    return list(cr)[0][0]
+
+def updatePin(cardNO,newPin):
+    q = 'UPDATE Card SET cardPin ='+newPin+' WHERE cardNo ='+cardNO
+    cr.execute(q)
+    mydb.commit()
 
 
-# q = 'SELECT AccBal FROM Account WHERE AccNo=2035000002'
-# cr.execute(q)
-# print(cr.fetchall())
+
+# print(fetchMobileFromAccNo(2035000002))

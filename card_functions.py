@@ -37,3 +37,5 @@ def cssLoader(file):
     with open(file,'r') as f:
         rd = f.read()
     return rd
+
+# generate_card('4214920353926205','Dipa')
