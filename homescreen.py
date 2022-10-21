@@ -1,6 +1,7 @@
 '''Author :: Ankit Yadav
     Date :: 16/09/2022
 '''
+from doctest import FAIL_FAST
 from awsDb import *
 from admin import createAdminMenu
 from stackedwidget import widget,app
@@ -19,8 +20,8 @@ from PyQt5.uic import loadUi
 #     while(datetime.datetime.now()<current + datetime.timedelta(seconds=interval)):
 #         pass
 
-def prompt(heading,msg):
-    p = promptScr(heading,msg)
+def prompt(heading,msg,proceedEnabled):
+    p = promptScr(heading,msg,proceedEnabled)
     widget.addWidget(p)
     widget.setCurrentWidget(p)
 
@@ -98,6 +99,7 @@ class menu(QDialog):
         self.greetLabel.setText('Welcome '+newSession.firstName)
         self.cancelBtn.clicked.connect(gotoHome)
         self.resetBtn.clicked.connect(self.reset)
+        self.transferBtn.clicked.connect(self.fundTransfer)
         self.flag = True
 
     def withdraw(self):
@@ -118,6 +120,10 @@ class menu(QDialog):
         inp = InputStr(s,'ENTER MOBILE NUMBER')
         widget.addWidget(inp)
         widget.setCurrentWidget(inp)
+
+    def fundTransfer(self):
+        t = FundTransfer()
+        t.proceed()
 
 class ResetPinSession():
     def __init__(self) -> None:
@@ -214,14 +220,17 @@ class withdrawScr(QDialog):
         
 
 class promptScr(QDialog):
-    def __init__(self,message,desc):
+    def __init__(self,message,desc,proceedEnabled = False):
         super(promptScr,self).__init__()
         loadUi('UI/prompt.ui',self)
         self.setStyleSheet(cssLoader('style.css'))
         self.instructLabel.setText(message)
         self.descLabel.setText(desc)
         self.cancelBtn.clicked.connect(gotoHome)
-
+        if not proceedEnabled:
+            self.proceedBtn.hide()
+        if proceedEnabled:
+            self.cancelBtn.setText('CANCEL')
 
 class pinScr(QDialog):
     def __init__(self,parentObj):
@@ -266,6 +275,38 @@ class InputStr(QDialog):
 
     def clear(self):
         self.lineEdit.setText('')
+
+class FundTransfer():
+    def __init__(self):
+        self.amountEntered = False
+        self.accNoEntered = False
+        self.accNoConfirmed = False
+
+    def proceed(self,inpObj = None):
+        if self.amountEntered:
+            self.amount = inpObj.getVal()
+            prompt('CONFIRM DETAILS','Beneficiary Name : \nAmount : ',True)
+
+        elif self.accNoConfirmed:
+            if inpObj.getVal() == self.accNo:
+                self.amountEntered = True
+                i = InputStr(self,'ENTER AMOUNT',6)
+                widget.addWidget(i)
+                widget.setCurrentWidget(i)
+            else:
+                print('Doesnt match')
+        elif self.accNoEntered:
+            self.accNoConfirmed = True
+            self.accNo = inpObj.getVal()
+            print(self.accNo)
+            i = InputStr(self,'CONFIRM ACCOUNT NUMBER',10)
+            widget.addWidget(i)
+            widget.setCurrentWidget(i)
+        else:
+            self.accNoEntered = True
+            i = InputStr(self,'ENTER ACCOUNT NUMBER',10)
+            widget.addWidget(i)
+            widget.setCurrentWidget(i)
 
 if __name__=='__main__':
     homeScr = homescreen()

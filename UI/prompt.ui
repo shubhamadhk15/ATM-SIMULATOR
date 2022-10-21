@@ -81,7 +81,7 @@
      <x>0</x>
      <y>100</y>
      <width>700</width>
-     <height>50</height>
+     <height>41</height>
     </rect>
    </property>
    <property name="font">
@@ -99,56 +99,70 @@
     <number>10</number>
    </property>
   </widget>
-  <widget class="QWidget" name="horizontalLayoutWidget_2">
+  <widget class="QWidget" name="horizontalLayoutWidget">
    <property name="geometry">
     <rect>
      <x>0</x>
-     <y>150</y>
+     <y>349</y>
      <width>701</width>
-     <height>222</height>
+     <height>71</height>
     </rect>
    </property>
-   <layout class="QHBoxLayout" name="horizontalLayout_2">
-    <property name="leftMargin">
-     <number>100</number>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <property name="spacing">
+     <number>60</number>
     </property>
-    <property name="topMargin">
-     <number>70</number>
+    <property name="leftMargin">
+     <number>60</number>
     </property>
     <property name="rightMargin">
-     <number>100</number>
-    </property>
-    <property name="bottomMargin">
-     <number>100</number>
+     <number>60</number>
     </property>
     <item>
-     <widget class="QLabel" name="descLabel">
+     <widget class="QPushButton" name="cancelBtn">
       <property name="font">
        <font>
-        <pointsize>15</pointsize>
+        <pointsize>12</pointsize>
        </font>
       </property>
       <property name="text">
-       <string>Description</string>
+       <string>HOME</string>
       </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="proceedBtn">
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>PROCEED</string>
       </property>
      </widget>
     </item>
    </layout>
   </widget>
-  <widget class="QPushButton" name="cancelBtn">
+  <widget class="QLabel" name="descLabel">
    <property name="geometry">
     <rect>
-     <x>300</x>
-     <y>380</y>
-     <width>95</width>
-     <height>36</height>
+     <x>10</x>
+     <y>150</y>
+     <width>681</width>
+     <height>191</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <pointsize>17</pointsize>
+    </font>
+   </property>
    <property name="text">
-    <string>HOME</string>
+    <string>TextLabel</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
    </property>
   </widget>
  </widget>
