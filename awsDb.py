@@ -53,6 +53,16 @@ def updatePin(cardNO,newPin):
     cr.execute(q)
     mydb.commit()
 
-
-
-# print(fetchMobileFromAccNo(2035000002))
+def connectAtm(hwId):
+    q = 'select AtmHwId from Atm;'
+    cr.execute(q)
+    hwIds = [i[0] for i in cr]
+    if hwId[0] in hwIds:
+        return
+    else:
+        q1 = 'alter table Atm auto_increment=1;'
+        q = """INSERT INTO `Atm` (`AtmId`, `Atm100`, `Atm200`, `Atm500`, `Atm2000`, `AtmHwId`, `AtmName`) VALUES (
+            NULL, NULL, NULL, NULL, NULL, %s, %s);"""
+        cr.execute(q1)
+        cr.execute(q,hwId)
+        mydb.commit()

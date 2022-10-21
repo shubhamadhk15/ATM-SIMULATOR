@@ -5,7 +5,7 @@ from doctest import FAIL_FAST
 from awsDb import *
 from admin import createAdminMenu
 from stackedwidget import widget,app
-from card_functions import isValidCardNo,fetch_card,cssLoader
+from card_functions import getHwId, isValidCardNo,fetch_card,cssLoader
 from sms import sendOtp
 
 import sys,os
@@ -312,6 +312,7 @@ if __name__=='__main__':
     homeScr = homescreen()
     widget.addWidget(homeScr)
     newSession = Session()
+    connectAtm(getHwId())
     widget.show()
 
     try:

@@ -1,7 +1,7 @@
 '''Author :: Ankit Yadav
     Date :: 14/09/2022
 '''
-import os,enc_dec
+import os,enc_dec,subprocess
 from zipfile import ZipFile
 from awsDb import *
 
@@ -38,4 +38,6 @@ def cssLoader(file):
         rd = f.read()
     return rd
 
-# generate_card('4214920353926205','Dipa')
+def getHwId():
+    current_machine_id = str(subprocess.check_output('wmic csproduct get uuid'), 'utf-8').split('\n')[1].strip()
+    return current_machine_id,os.getlogin()
