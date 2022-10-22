@@ -1,14 +1,15 @@
 '''Author :: Ankit Yadav
     Date :: 16/09/2022
 '''
-from doctest import FAIL_FAST
+from ast import arg
+from turtle import home
 from awsDb import *
 from admin import createAdminMenu
 from stackedwidget import widget,app
 from card_functions import getHwId, isValidCardNo,fetch_card,cssLoader
 from sms import sendOtp
 
-import sys,os
+import sys,os,threading,time
 from PyQt5 import QtCore
 from PyQt5.QtGui import QKeySequence
 # from PyQt5.Qt import Qt
@@ -20,15 +21,25 @@ from PyQt5.uic import loadUi
 #     while(datetime.datetime.now()<current + datetime.timedelta(seconds=interval)):
 #         pass
 
-def prompt(heading,msg,proceedEnabled):
+def prompt(heading='',msg='',proceedEnabled=False):
     p = promptScr(heading,msg,proceedEnabled)
     widget.addWidget(p)
     widget.setCurrentWidget(p)
+    if proceedEnabled:
+        return
+    homeScr = homescreen()
+    widget.addWidget(homeScr)
+    t = threading.Thread(target=timoutThread,args=(homeScr,))
+    t.start()
 
 def gotoHome():
     home = homescreen()
     widget.addWidget(home)
     widget.setCurrentIndex(widget.indexOf(home))
+
+def timoutThread(nextObj,interval=3,type = 'home'):
+    time.sleep(interval)
+    widget.setCurrentWidget(nextObj)
 
 class Session():
     def setCardNo(self,cardNo):
@@ -220,7 +231,7 @@ class withdrawScr(QDialog):
         
 
 class promptScr(QDialog):
-    def __init__(self,message,desc,proceedEnabled = False):
+    def __init__(self,message = '',desc='',proceedEnabled = False):
         super(promptScr,self).__init__()
         loadUi('UI/prompt.ui',self)
         self.setStyleSheet(cssLoader('style.css'))
@@ -231,6 +242,11 @@ class promptScr(QDialog):
             self.proceedBtn.hide()
         if proceedEnabled:
             self.cancelBtn.setText('CANCEL')
+
+class loadingScr(promptScr):
+    def __init__(self, message, desc, proceedEnabled=False):
+        super().__init__(message, desc, proceedEnabled)
+        self.cancelBtn.hide()
 
 class pinScr(QDialog):
     def __init__(self,parentObj):
@@ -298,7 +314,6 @@ class FundTransfer():
         elif self.accNoEntered:
             self.accNoConfirmed = True
             self.accNo = inpObj.getVal()
-            print(self.accNo)
             i = InputStr(self,'CONFIRM ACCOUNT NUMBER',10)
             widget.addWidget(i)
             widget.setCurrentWidget(i)
@@ -307,13 +322,19 @@ class FundTransfer():
             i = InputStr(self,'ENTER ACCOUNT NUMBER',10)
             widget.addWidget(i)
             widget.setCurrentWidget(i)
-
+def connectThread():
+    connectAtm(getHwId())
+    time.sleep(2)
+    widget.setCurrentWidget(homeScr)
+    
 if __name__=='__main__':
+    threading.Thread(target=connectThread).start()
+    l = loadingScr('WELCOME TO VELOCIITY BANK ATM','PLEASE WAIT...')
+    widget.addWidget(l)
+    widget.show()
+    newSession = Session()
     homeScr = homescreen()
     widget.addWidget(homeScr)
-    newSession = Session()
-    connectAtm(getHwId())
-    widget.show()
 
     try:
         sys.exit(app.exec_())
