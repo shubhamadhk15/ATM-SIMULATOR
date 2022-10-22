@@ -1,8 +1,6 @@
 '''Author :: Ankit Yadav
     Date :: 16/09/2022
 '''
-from ast import arg
-from turtle import home
 from awsDb import *
 from admin import createAdminMenu
 from stackedwidget import widget,app
@@ -12,34 +10,33 @@ from sms import sendOtp
 import sys,os,threading,time
 from PyQt5 import QtCore
 from PyQt5.QtGui import QKeySequence
-# from PyQt5.Qt import Qt
 from PyQt5.QtWidgets import QDialog,QShortcut,QLineEdit
 from PyQt5.uic import loadUi
     
-# def countdown(interval):
-#     current = datetime.datetime.now()
-#     while(datetime.datetime.now()<current + datetime.timedelta(seconds=interval)):
-#         pass
-
-def prompt(heading='',msg='',proceedEnabled=False):
-    p = promptScr(heading,msg,proceedEnabled)
+def prompt(heading='',msg='',proceedEnabled=False,parent = None):
+    p = promptScr(heading,msg,proceedEnabled,parent)
     widget.addWidget(p)
     widget.setCurrentWidget(p)
+    interval = 5
     if proceedEnabled:
-        return
+        interval = 30
     homeScr = homescreen()
     widget.addWidget(homeScr)
-    t = threading.Thread(target=timoutThread,args=(homeScr,))
-    t.start()
+    timethread = threading.Thread(target=timoutThread,args=(homeScr,interval))
+    timethread.daemon = True
+    timethread.start()
 
 def gotoHome():
+    event.set()
     home = homescreen()
     widget.addWidget(home)
     widget.setCurrentIndex(widget.indexOf(home))
 
-def timoutThread(nextObj,interval=3,type = 'home'):
+def timoutThread(nextObj,interval=3):
     time.sleep(interval)
-    widget.setCurrentWidget(nextObj)
+    if not event.is_set():
+        event.set()
+        widget.setCurrentWidget(nextObj)
 
 class Session():
     def setCardNo(self,cardNo):
@@ -223,7 +220,7 @@ class withdrawScr(QDialog):
         if self.amount>fetchBal(newSession.accNo):
             prompt('INSUFFICIENT BALANCE','PLEASE TAKE OUT YOUR CARD')
         else:
-            deductAmount(self.amount,newSession.accNo)
+            transact(self.amount,newSession.atmId,newSession.accNo)
             prompt('TRANSACTION SUCCESSFULL','PLEASE COLLECT YOUR CASH AND CARD')
 
     def clear(self):
@@ -231,18 +228,24 @@ class withdrawScr(QDialog):
         
 
 class promptScr(QDialog):
-    def __init__(self,message = '',desc='',proceedEnabled = False):
+    def __init__(self,message = '',desc='',proceedEnabled = False,parent = None):
         super(promptScr,self).__init__()
         loadUi('UI/prompt.ui',self)
         self.setStyleSheet(cssLoader('style.css'))
         self.instructLabel.setText(message)
         self.descLabel.setText(desc)
         self.cancelBtn.clicked.connect(gotoHome)
+        self.proceedBtn.clicked.connect(self.proceed)
         if not proceedEnabled:
             self.proceedBtn.hide()
         if proceedEnabled:
             self.cancelBtn.setText('CANCEL')
+            self.parent = parent
 
+    def proceed(self):
+        p = pinScr(self.parent)
+        widget.addWidget(p)
+        widget.setCurrentWidget(p)
 class loadingScr(promptScr):
     def __init__(self, message, desc, proceedEnabled=False):
         super().__init__(message, desc, proceedEnabled)
@@ -297,11 +300,20 @@ class FundTransfer():
         self.amountEntered = False
         self.accNoEntered = False
         self.accNoConfirmed = False
+        self.pinEntered = False
 
     def proceed(self,inpObj = None):
+        if self.pinEntered:
+            transact(self.amount,newSession.atmId,newSession.accNo,self.accNo)
+            prompt('Transaction Successful'.upper(),'Thankyou For Using\nVELOCITY BANK ATM')
+            return
         if self.amountEntered:
             self.amount = inpObj.getVal()
-            prompt('CONFIRM DETAILS','Beneficiary Name : \nAmount : ',True)
+            if self.accNo == str(newSession.accNo):
+                prompt('INVALID INPUT','YOU CANNOT TRANSFER TO\nYOUR OWN ACCOUNT')
+            else:
+                self.pinEntered = True
+                prompt('CONFIRM DETAILS','Beneficiary Name : {} \nAmount : {} '.format(fetchNameFromAccNo(self.accNo),self.amount),True,self)
 
         elif self.accNoConfirmed:
             if inpObj.getVal() == self.accNo:
@@ -310,20 +322,22 @@ class FundTransfer():
                 widget.addWidget(i)
                 widget.setCurrentWidget(i)
             else:
-                print('Doesnt match')
+                prompt('MISMATCH INPUT','BENEFICIARY ACCOUNT NUMBER \nAND CONFIRMED ACCOUNT NUMBER \nDOES NOT MATCH.')
         elif self.accNoEntered:
             self.accNoConfirmed = True
             self.accNo = inpObj.getVal()
-            i = InputStr(self,'CONFIRM ACCOUNT NUMBER',10)
+            i = InputStr(self,'CONFIRM BENEFICIARY ACCOUNT NUMBER',10)
             widget.addWidget(i)
             widget.setCurrentWidget(i)
         else:
             self.accNoEntered = True
-            i = InputStr(self,'ENTER ACCOUNT NUMBER',10)
+            i = InputStr(self,'ENTER BENEFICIARY ACCOUNT NUMBER',10)
             widget.addWidget(i)
             widget.setCurrentWidget(i)
 def connectThread():
-    connectAtm(getHwId())
+    hwId = getHwId()
+    connectAtm(hwId)
+    newSession.atmId = getAtmIdFromHwId(hwId[0])
     time.sleep(2)
     widget.setCurrentWidget(homeScr)
     
@@ -335,6 +349,7 @@ if __name__=='__main__':
     newSession = Session()
     homeScr = homescreen()
     widget.addWidget(homeScr)
+    event = threading.Event()
 
     try:
         sys.exit(app.exec_())

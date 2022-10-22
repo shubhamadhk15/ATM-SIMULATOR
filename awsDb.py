@@ -27,6 +27,12 @@ def fetchFirstNameFromCard(cardNo):
     cr.execute(q)
     return list(cr)[0][0]
 
+def fetchNameFromAccNo(accNo):
+    custId = fetchCustIdFromAccNo(accNo)
+    q = '''SELECT CONCAT(CustFirst,' ',CustLast) FROM Customer WHERE CustId=%s'''
+    cr.execute(q,[custId])
+    return list(cr)[0][0]
+
 def fetchPin(cardNo):
     q = 'SELECT CardPin FROM Card WHERE CardNo='+cardNo
     cr.execute(q)
@@ -39,7 +45,7 @@ def fetchBal(accNo):
 
 def deductAmount(amount,accNo):
     bal = fetchBal(accNo)
-    bal-=amount
+    bal-=int(amount)
     q = 'UPDATE Account SET AccBal='+str(bal)+' WHERE accNo='+str(accNo)
     cr.execute(q)
     mydb.commit()
@@ -79,6 +85,17 @@ def genMiniStatement(accNo):
     return list(cr)
 
 def transact(amount,atmId,drAccNo = 'NULL',crAccNo = 'NULL'):
+    q1 = 'alter table Transactions auto_increment=1;'
+    cr.execute(q1)
     q = """INSERT INTO `Transactions` (`TId`, `TAmount`, `TCrAccNo`, `TDrAccNo`, `TDate`, `TAtmId`) VALUES (NULL, %s, %s, %s, %s, %s);"""
     cr.execute(q,[amount,crAccNo,drAccNo,datetime.date.today(),atmId])
+    if drAccNo!='NULL':
+        deductAmount(amount,drAccNo)
+    if crAccNo!='NULL':
+        deductAmount(-int(amount),crAccNo)
     mydb.commit()
+
+def getAtmIdFromHwId(hwId):
+    q = '''SELECT AtmId FROM Atm WHERE AtmHwId=%s'''
+    cr.execute(q,[hwId])
+    return list(cr)[0][0]
