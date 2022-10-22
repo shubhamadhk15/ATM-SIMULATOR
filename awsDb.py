@@ -79,7 +79,7 @@ def genMiniStatement(accNo):
     WHEN TCrAccNo=%s THEN 'Cr'
     ELSE 'Dr' END
     AS TType
-    FROM `atm-db`.Transactions where TDrAccNo=%s or TCrAccNo=%s
+    FROM `atm-db`.Transactions where TDrAccNo=%s or TCrAccNo=%s ORDER BY Tid DESC
     LIMIT 5;"""
     cr.execute(q,3*[accNo])
     return list(cr)

@@ -10,7 +10,7 @@ from sms import sendOtp
 import sys,os,threading,time
 from PyQt5 import QtCore
 from PyQt5.QtGui import QKeySequence
-from PyQt5.QtWidgets import QDialog,QShortcut,QLineEdit
+from PyQt5.QtWidgets import QDialog,QShortcut,QLineEdit,QTableWidgetItem
 from PyQt5.uic import loadUi
     
 def prompt(heading='',msg='',proceedEnabled=False,parent = None):
@@ -108,7 +108,7 @@ class menu(QDialog):
         self.cancelBtn.clicked.connect(gotoHome)
         self.resetBtn.clicked.connect(self.reset)
         self.transferBtn.clicked.connect(self.fundTransfer)
-        self.flag = True
+        self.miniBtn.clicked.connect(self.miniStatement)
 
     def withdraw(self):
         self.withdrawObj = withdrawScr()
@@ -132,6 +132,10 @@ class menu(QDialog):
     def fundTransfer(self):
         t = FundTransfer()
         t.proceed()
+
+    def miniStatement(self):
+        obj = MIniStateMent()
+        obj.proceed()
 
 class ResetPinSession():
     def __init__(self) -> None:
@@ -334,6 +338,55 @@ class FundTransfer():
             i = InputStr(self,'ENTER BENEFICIARY ACCOUNT NUMBER',10)
             widget.addWidget(i)
             widget.setCurrentWidget(i)
+
+class MIniStateMent():
+    def __init__(self) -> None:
+        self.pinEntered = False
+    def proceed(self):
+        if self.pinEntered:
+            p = MiniStatementWindow()
+            widget.addWidget(p)
+            widget.setCurrentWidget(p)
+        else:
+            self.pinEntered = True
+            p = pinScr(self)
+            widget.addWidget(p)
+            widget.setCurrentWidget(p)
+
+class MiniStatementWindow(QDialog):
+    def __init__(self):
+        super(MiniStatementWindow,self).__init__()
+        loadUi('UI/statement.ui',self)
+        self.setStyleSheet(cssLoader('style.css'))
+        self.instructLabel.setText(newSession.firstName.upper()+', YOUR MINI STATEMENT')
+        self.insertData()
+        self.table.setColumnWidth(3,200)
+        for i in range(3):
+            self.table.setColumnWidth(i,150)
+        self.cancelBtn.clicked.connect(gotoHome)
+
+    def insertData(self):
+        data = genMiniStatement(newSession.accNo)
+        self.table.setRowCount(len(data))
+        bal = fetchBal(newSession.accNo)
+        r = 0
+        for row in data:
+            c = 0
+            for item in row:
+                tableItem = QTableWidgetItem(item)
+                tableItem.setTextAlignment(QtCore.Qt.AlignCenter)
+                self.table.setItem(r,c,tableItem)
+                c+=1
+            if r>0:
+                if data[r][2]=='Cr':
+                    bal-=int(data[r][1])
+                else:
+                    bal+=int(data[r][1])
+            tItem = QTableWidgetItem(str(bal))
+            tItem.setTextAlignment(QtCore.Qt.AlignCenter)
+            self.table.setItem(r,c,tItem)
+            r+=1
+
 def connectThread():
     hwId = getHwId()
     connectAtm(hwId)
