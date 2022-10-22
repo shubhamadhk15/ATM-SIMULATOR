@@ -1,4 +1,5 @@
-import mysql.connector
+from lib2to3.pytree import generate_matches
+import mysql.connector,datetime
 mydb = mysql.connector.connect(host='atm-db.cl5eytgewt31.ap-south-1.rds.amazonaws.com',
 user='admin',
 password='velocity',
@@ -66,3 +67,18 @@ def connectAtm(hwId):
         cr.execute(q1)
         cr.execute(q,hwId)
         mydb.commit()
+
+def genMiniStatement(accNo):
+    q = """SELECT TDate,TAmount , CASE
+    WHEN TCrAccNo=%s THEN 'Cr'
+    ELSE 'Dr' END
+    AS TType
+    FROM `atm-db`.Transactions where TDrAccNo=%s or TCrAccNo=%s
+    LIMIT 5;"""
+    cr.execute(q,3*[accNo])
+    return list(cr)
+
+def transact(amount,atmId,drAccNo = 'NULL',crAccNo = 'NULL'):
+    q = """INSERT INTO `Transactions` (`TId`, `TAmount`, `TCrAccNo`, `TDrAccNo`, `TDate`, `TAtmId`) VALUES (NULL, %s, %s, %s, %s, %s);"""
+    cr.execute(q,[amount,crAccNo,drAccNo,datetime.date.today(),atmId])
+    mydb.commit()
