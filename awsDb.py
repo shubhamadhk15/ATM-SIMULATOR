@@ -99,3 +99,32 @@ def getAtmIdFromHwId(hwId):
     q = '''SELECT AtmId FROM Atm WHERE AtmHwId=%s'''
     cr.execute(q,[hwId])
     return list(cr)[0][0]
+
+def createCust(first ,last ,mob):
+    q1 = 'alter table Customer auto_increment=1;'
+    cr.execute(q1)
+    q = '''INSERT INTO `Customer` (`CustFirst`, `CustLast`, `CustMobile`) VALUES (%s, %s,%s);'''
+    cr.execute(q,[first.capitalize(),last.capitalize(),mob])
+    mydb.commit()
+
+def insertAc(custId):
+    q1 = 'alter table Account auto_increment=1;'
+    cr.execute(q1)
+    q = '''INSERT INTO `Account` (`CustId`) VALUES (%s);'''
+    cr.execute(q,[custId])
+    mydb.commit()
+
+def fetchCustIdFromMob(mob:str):
+    q = 'SELECT CustId from Customer where CustMobile = '+mob
+    cr.execute(q)
+    return list(cr)[0][0]    
+
+def fetchLastAc(custId):
+    q = 'SELECT AccNo from Account where CustId = '+custId+' ORDER BY AccNo DESC'
+    cr.execute(q)
+    return list(cr)[0][0] 
+
+def getMobiles():
+    q = 'SELECT CustMobile from Customer'
+    cr.execute(q)
+    return [i[0] for i in list(cr)]

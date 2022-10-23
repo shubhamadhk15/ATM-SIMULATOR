@@ -104,7 +104,7 @@ class menu(QDialog):
         self.setStyleSheet(cssLoader('style.css'))
         self.withdrawBtn.clicked.connect(self.withdraw)
         self.balBtn.clicked.connect(self.checkBal)
-        self.greetLabel.setText('Welcome '+newSession.firstName)
+        self.greetLabel.setText('Welcome, '+newSession.firstName)
         self.cancelBtn.clicked.connect(gotoHome)
         self.resetBtn.clicked.connect(self.reset)
         self.transferBtn.clicked.connect(self.fundTransfer)
