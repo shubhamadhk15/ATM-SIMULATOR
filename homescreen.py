@@ -3,9 +3,10 @@
 '''
 from awsDb import *
 from admin import createAdminMenu
-from stackedwidget import widget,app
+from stackedwidget import widget,app,newSession
 from card_functions import getHwId, isValidCardNo,fetch_card,cssLoader
 from sms import sendOtp
+from commonClasses import pinScr,promptScr
 
 import sys,os,threading,time
 from PyQt5 import QtCore
@@ -38,12 +39,7 @@ def timoutThread(nextObj,interval=3):
         event.set()
         widget.setCurrentWidget(nextObj)
 
-class Session():
-    def setCardNo(self,cardNo):
-        self.cardNo = cardNo
-        self.accNo = fetchAccNoFromCard(cardNo)
-        self.firstName = fetchFirstNameFromCard(cardNo)
-        
+
 
 class homescreen(QDialog):
     path = '/'
@@ -231,51 +227,12 @@ class withdrawScr(QDialog):
         self.lineEdit.setText('')
         
 
-class promptScr(QDialog):
-    def __init__(self,message = '',desc='',proceedEnabled = False,parent = None):
-        super(promptScr,self).__init__()
-        loadUi('UI/prompt.ui',self)
-        self.setStyleSheet(cssLoader('style.css'))
-        self.instructLabel.setText(message)
-        self.descLabel.setText(desc)
-        self.cancelBtn.clicked.connect(gotoHome)
-        self.proceedBtn.clicked.connect(self.proceed)
-        if not proceedEnabled:
-            self.proceedBtn.hide()
-        if proceedEnabled:
-            self.cancelBtn.setText('CANCEL')
-            self.parent = parent
 
-    def proceed(self):
-        p = pinScr(self.parent)
-        widget.addWidget(p)
-        widget.setCurrentWidget(p)
 class loadingScr(promptScr):
     def __init__(self, message, desc, proceedEnabled=False):
         super().__init__(message, desc, proceedEnabled)
         self.cancelBtn.hide()
 
-class pinScr(QDialog):
-    def __init__(self,parentObj):
-        super(pinScr,self).__init__()
-        loadUi('UI/pin.ui',self)
-        self.parentObj = parentObj
-        self.setStyleSheet(cssLoader('style.css'))
-        self.proceedBtn.clicked.connect(self.verifyPin)
-        self.clearBtn.clicked.connect(self.clear)
-        self.cancelBtn.clicked.connect(gotoHome)
-    # def keyPressEvent(self, event: QtGui.QKeyEvent):
-    #     if event.key() == Qt.Key_Num0:
-    #         self.lineEdit.setText('0')
-
-    def verifyPin(self):
-        if self.lineEdit.text() == fetchPin(newSession.cardNo):
-            self.parentObj.proceed()
-        else:
-            prompt('Invalid PIN','Please Takout Your Card')
-
-    def clear(self):
-        self.lineEdit.setText('')
 
 class InputStr(QDialog):
     def __init__(self,parent,fieldname,maxLen=10,type='normal'):
@@ -399,12 +356,11 @@ if __name__=='__main__':
     l = loadingScr('WELCOME TO VELOCIITY BANK ATM','PLEASE WAIT...')
     widget.addWidget(l)
     widget.show()
-    newSession = Session()
     homeScr = homescreen()
     widget.addWidget(homeScr)
-    event = threading.Event()
 
     try:
         sys.exit(app.exec_())
     except:
         print('Exiting')
+event = threading.Event()

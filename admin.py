@@ -54,8 +54,7 @@ class AdminMenu(QDialog):
 
     def cancel(self):
         adminWidget.hide()
-        adminWidget.destro
-
+        
     def newAc(self):
         obj = NewUser()
         obj.proceed()
