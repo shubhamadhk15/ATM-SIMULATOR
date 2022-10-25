@@ -358,9 +358,8 @@ if __name__=='__main__':
     widget.show()
     homeScr = homescreen()
     widget.addWidget(homeScr)
-
+    event = threading.Event()
     try:
         sys.exit(app.exec_())
     except:
         print('Exiting')
-event = threading.Event()
