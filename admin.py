@@ -3,8 +3,8 @@ from sms import sendOtp
 from stackedwidget import adminWidget
 from PyQt5.QtWidgets import QDialog,QLineEdit
 from PyQt5.uic import loadUi
-from awsDb import createCust,fetchCustIdFromMob, fetchLastAc, getMobiles,insertAc
-from card_functions import cssLoader
+from awsDb import createCust,fetchCustIdFromMob, fetchLastAc, getMobiles,insertAc,insertCard,getAccounts,fetchFirstNameFromCard
+from card_functions import cssLoader,generate_card
 
 def createAdminMenu():
     adminMenuObj = AdminMenu()
@@ -51,6 +51,10 @@ class AdminMenu(QDialog):
         self.newAcBtn.clicked.connect(self.newAc)
         self.exAcBtn.clicked.connect(self.exUserAc)
         self.cancelBtn.clicked.connect(self.cancel)
+        self.issueCardBtn.clicked.connect(self.issueCard)
+
+    def issueCard(self):
+        GenerateCard()
 
     def cancel(self):
         adminWidget.hide()
@@ -139,3 +143,43 @@ class createAcc():
         else:
             msg = 'Existing Customer Id : '+self.custId+'\nAccount Number : '+str(self.accNo)
         prompt('ACCOUNT CREATED SUCCESSFULLY!',msg,w = adminWidget)
+
+class GenerateCard():
+    def __init__(self) -> None:
+        takeInp(self,'ENTER ACCOUNT NUMBER')
+        
+    def proceed(self,inpObj):
+        self.accNo = inpObj.getVal()
+        if int(self.accNo) in getAccounts():
+            obj = InputCardType(self)
+            adminWidget.addWidget(obj)
+            adminWidget.setCurrentWidget(obj)
+        else:
+            prompt('INVALID INPUT','NO ACCOUNT FOUND!',w=adminWidget)
+
+class InputCardType(QDialog):
+    def __init__(self,obj):
+        super(InputCardType,self).__init__()
+        loadUi('UI/card_types.ui',self)
+        self.obj = obj
+        self.proceedBtn.setEnabled(False)
+        self.cardNetSelect.currentIndexChanged.connect(self.cardNetChanged)
+        self.cardTypeSelect.currentIndexChanged.connect(self.cardTypeChanged)
+        self.setStyleSheet(cssLoader('style.css'))
+        self.proceedBtn.clicked.connect(self.proceed)
+        self.cancelBtn.clicked.connect(gotoHome)
+
+    def proceed(self):
+        cardNo = insertCard(self.obj.accNo,self.cardNetSelect.currentText(), self.cardTypeSelect.currentText())
+        generate_card(str(cardNo),fetchFirstNameFromCard(str(cardNo)))
+        prompt('CARD GENERATED','PLEASE RESET PIN TO ACTIVATE',w=adminWidget)
+
+    def cardNetChanged(self):
+        self.checkSelectInp()
+    def cardTypeChanged(self):
+        self.checkSelectInp()
+    def checkSelectInp(self):
+        if self.cardNetSelect.currentText() !='SELECT CARD NETWORK' and self.cardTypeSelect.currentText() !='SELECT CARD TYPE':
+            self.proceedBtn.setEnabled(True)
+        else:
+            self.proceedBtn.setEnabled(False)

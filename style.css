@@ -28,5 +28,11 @@ QPushButton{
     color: white;
 }
 #cancelBtn,#clearBtn,#proceedBtn{
-    background-color: rgb(86, 168, 240);
+    background-color: rgb(37, 145, 240);
 }
+
+#proceedBtn:disabled{
+    background-color: gray;
+    color: white;
+}
+

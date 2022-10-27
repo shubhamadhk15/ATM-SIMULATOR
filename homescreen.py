@@ -81,7 +81,7 @@ class homescreen(QDialog):
         except :
             print('Invalid Card  hehe')
             return
-        if(isValidCardNo(card_no)):
+        if(isValidCardNo(int(card_no))):
             print('card accepted')
             newSession.setCardNo(card_no)
             self.menuObj = menu()
@@ -351,6 +351,7 @@ def connectThread():
     time.sleep(2)
     widget.setCurrentWidget(homeScr)
     
+event = threading.Event()
 if __name__=='__main__':
     threading.Thread(target=connectThread).start()
     l = loadingScr('WELCOME TO VELOCIITY BANK ATM','PLEASE WAIT...')
@@ -358,7 +359,6 @@ if __name__=='__main__':
     widget.show()
     homeScr = homescreen()
     widget.addWidget(homeScr)
-    event = threading.Event()
     try:
         sys.exit(app.exec_())
     except:

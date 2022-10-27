@@ -1,5 +1,7 @@
-from lib2to3.pytree import generate_matches
+import random
 import mysql.connector,datetime
+from datetime import datetime
+
 mydb = mysql.connector.connect(host='atm-db.cl5eytgewt31.ap-south-1.rds.amazonaws.com',
 user='admin',
 password='velocity',
@@ -126,5 +128,25 @@ def fetchLastAc(custId):
 
 def getMobiles():
     q = 'SELECT CustMobile from Customer'
+    cr.execute(q)
+    return [i[0] for i in list(cr)]
+
+def fetchLastCard(accNo):
+    q = 'SELECT CardNo from Card where AccNo = '+accNo
+    cr.execute(q)
+    return list(cr)[0][0]
+
+def insertCard(accNo,cNet,cType):
+    q1 = 'alter table Card auto_increment=4214000000000001;'
+    cr.execute(q1)
+    exp = int(datetime.today().strftime('%m%y'))+5
+    pin = random.randint(1000,9999)
+    q = '''INSERT INTO `Card` (`CardExp`, `CardPin`, `AccNo`, `CardNet`, `CardType`) VALUES (%s,%s,%s,%s,%s);'''
+    cr.execute(q,[exp,pin,accNo,cNet,cType])
+    mydb.commit()
+    return fetchLastCard(accNo)
+
+def getAccounts():
+    q = 'SELECT AccNo from Account'
     cr.execute(q)
     return [i[0] for i in list(cr)]
