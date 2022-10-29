@@ -1,9 +1,9 @@
 from commonClasses import prompt
 from sms import sendOtp
-from stackedwidget import adminWidget
-from PyQt5.QtWidgets import QDialog,QLineEdit
+from stackedwidget import adminWidget,newSession
 from PyQt5.uic import loadUi
-from awsDb import createCust,fetchCustIdFromMob, fetchLastAc, getMobiles,insertAc,insertCard,getAccounts,fetchFirstNameFromCard
+from PyQt5.QtWidgets import QDialog,QLineEdit
+from awsDb import createCust,fetchCustIdFromMob, fetchLastAc, getMobiles,insertAc,insertCard,getAccounts,fetchFirstNameFromCard,refillAtm
 from card_functions import cssLoader,generate_card
 
 def createAdminMenu():
@@ -52,6 +52,7 @@ class AdminMenu(QDialog):
         self.exAcBtn.clicked.connect(self.exUserAc)
         self.cancelBtn.clicked.connect(self.cancel)
         self.issueCardBtn.clicked.connect(self.issueCard)
+        self.refillBtn.clicked.connect(self.refill)
 
     def issueCard(self):
         GenerateCard()
@@ -66,6 +67,11 @@ class AdminMenu(QDialog):
     def exUserAc(self):
         obj = createAcc()
         obj.proceed(self)
+
+    def refill(self):
+        r = Refill()
+        adminWidget.addWidget(r)
+        adminWidget.setCurrentWidget(r)
 
 class NewUser():
     def __init__(self) -> None:
@@ -183,3 +189,23 @@ class InputCardType(QDialog):
             self.proceedBtn.setEnabled(True)
         else:
             self.proceedBtn.setEnabled(False)
+
+class Refill(QDialog):
+    def __init__(self):
+        super(Refill,self).__init__()
+        loadUi('UI/refill.ui',self)
+        self.setStyleSheet(cssLoader('style.css'))
+        self.proceedBtn.clicked.connect(self.proceed)
+        self.cancelBtn.clicked.connect(gotoHome)
+    def proceed(self):
+        r1 = self.lineEdit100.text()
+        r2 = self.lineEdit200.text()
+        r5 = self.lineEdit500.text()
+        r20 = self.lineEdit2000.text()
+        try:
+            map(int,[r1,r2,r5,r20])
+            if not (r1==0 and r2 == 0 and r5 == 0 and r20==0):
+                refillAtm(str(newSession.atmId),r1,r2,r5,r20)
+                prompt('SUCCESSFULLY REFILLED')
+        except:
+            pass

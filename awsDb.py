@@ -70,11 +70,19 @@ def connectAtm(hwId):
         return
     else:
         q1 = 'alter table Atm auto_increment=1;'
-        q = """INSERT INTO `Atm` (`AtmId`, `Atm100`, `Atm200`, `Atm500`, `Atm2000`, `AtmHwId`, `AtmName`) VALUES (
-            NULL, NULL, NULL, NULL, NULL, %s, %s);"""
+        q = """INSERT INTO `Atm` ( `AtmHwId`, `AtmName`) VALUES (%s, %s);"""
         cr.execute(q1)
         cr.execute(q,hwId)
         mydb.commit()
+
+def getCashCounts(atmId:str):
+    cr.execute('SELECT Atm100,Atm200,Atm500,Atm2000 from Atm where AtmId = '+atmId)
+    return list(cr)[0]
+
+def refillAtm(atmId:str,Atm100:str = '0',Atm200:str='0',Atm500:str='0',Atm2000:str='0'):
+    q = '''UPDATE Atm SET Atm100 = Atm100+%s , Atm200 = Atm200+%s, Atm500 = Atm500+%s, Atm2000 = Atm2000+%s where AtmId = %s;'''
+    cr.execute(q,[Atm100,Atm200,Atm500,Atm2000,atmId])
+    mydb.commit()
 
 def genMiniStatement(accNo):
     q = """SELECT TDate,TAmount , CASE
