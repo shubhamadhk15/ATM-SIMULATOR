@@ -1,13 +1,16 @@
 import sys
 from PyQt5.QtWidgets import QStackedWidget,QApplication
 
-from awsDb import fetchAccNoFromCard,fetchFirstNameFromCard
+from awsDb import fetchAccNoFromCard,fetchFirstNameFromCard,fetchCardExp,fetchLastNameFromAccNo,fetchCardType
 
 class Session():
     def setCardNo(self,cardNo):
         self.cardNo = cardNo
         self.accNo = fetchAccNoFromCard(cardNo)
         self.firstName = fetchFirstNameFromCard(cardNo)
+        self.lastName = fetchLastNameFromAccNo(self.accNo)
+        self.cardExp = fetchCardExp(cardNo)
+        self.cardType = fetchCardType(cardNo)
 
 newSession = Session()
 

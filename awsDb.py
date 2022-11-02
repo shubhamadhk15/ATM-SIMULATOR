@@ -1,6 +1,6 @@
 import random
 import mysql.connector,datetime
-from datetime import datetime
+# from datetime import datetime
 
 mydb = mysql.connector.connect(host='atm-db.cl5eytgewt31.ap-south-1.rds.amazonaws.com',
 user='admin',
@@ -26,6 +26,11 @@ def fetchFirstNameFromCard(cardNo):
     accNo = fetchAccNoFromCard(cardNo)
     custId = fetchCustIdFromAccNo(accNo)
     q = 'SELECT CustFirst FROM Customer WHERE CustId='+str(custId)
+    cr.execute(q)
+    return list(cr)[0][0]
+
+def fetchLastNameFromAccNo(accNo):
+    q = 'SELECT CustLast FROM Customer WHERE CustId='+str(fetchCustIdFromAccNo(accNo))
     cr.execute(q)
     return list(cr)[0][0]
 
@@ -58,8 +63,8 @@ def fetchMobileFromAccNo(AccNo):
     return list(cr)[0][0]
 
 def updatePin(cardNO,newPin):
-    q = 'UPDATE Card SET cardPin ='+newPin+' WHERE cardNo ='+cardNO
-    cr.execute(q)
+    q = '''UPDATE Card SET cardPin = %s WHERE cardNo = %s'''
+    cr.execute(q,[newPin,cardNO])
     mydb.commit()
 
 def connectAtm(hwId):
@@ -158,3 +163,15 @@ def getAccounts():
     q = 'SELECT AccNo from Account'
     cr.execute(q)
     return [i[0] for i in list(cr)]
+
+def fetchCardExp(cardNo):
+    cr.execute('select CardExp from Card where CardNo = '+cardNo)
+    return(list(cr)[0][0])
+
+def fetchCardType(cardNO):
+    cr.execute('SELECT CardNet,cardType from Card where cardNo = '+cardNO)
+    return list(cr)[0]
+
+def getAtmDenoms(atmId):
+    cr.execute('select Atm100,Atm200,Atm500,Atm2000 from Atm where AtmId = '+str(atmId))
+    return list(cr)[0]

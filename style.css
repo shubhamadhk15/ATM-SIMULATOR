@@ -36,3 +36,8 @@ QPushButton{
     color: white;
 }
 
+#cardNoLabel,#cardHoldLabel,#validLabel{
+    background-color: rgba(0,0,0,0%);
+    color:aliceblue;
+    font-size: 15px;
+}
