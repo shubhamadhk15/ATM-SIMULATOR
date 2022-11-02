@@ -206,6 +206,6 @@ class Refill(QDialog):
             map(int,[r1,r2,r5,r20])
             if not (r1==0 and r2 == 0 and r5 == 0 and r20==0):
                 refillAtm(str(newSession.atmId),r1,r2,r5,r20)
-                prompt('SUCCESSFULLY REFILLED')
+                prompt('SUCCESSFULLY REFILLED',w=adminWidget)
         except:
-            pass
+            prompt('INVALID INPUT',w=adminWidget)

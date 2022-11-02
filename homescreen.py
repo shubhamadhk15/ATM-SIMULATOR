@@ -10,7 +10,7 @@ from commonClasses import pinScr,promptScr
 
 import sys,os,threading,time
 from PyQt5 import QtCore
-from PyQt5.QtGui import QKeySequence,QPixmap
+from PyQt5.QtGui import QKeySequence,QPixmap,QIcon
 from PyQt5.QtWidgets import QDialog,QShortcut,QLineEdit,QTableWidgetItem
 from PyQt5.uic import loadUi
 from PyQt5.QtCore import QPropertyAnimation, QPoint
